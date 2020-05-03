@@ -1,0 +1,423 @@
+
+// Source: http://lesscss.org/features/#features-overview-feature
+// Used a plugin here in vscode to generate css from less on saving the less file.
+
+/* command to generate css: lessc style.less style.css */
+@width: 100px;
+@height: @width + 100px;
+@min768: ~"(min-width: 768px)";
+
+// .bordered(): this is  non output mixin. It will not be listed in the css output.
+// .bordered: this is outputing mixin. It will appear in the css output.
+// use semi-colon to separate params, as comma can be used to pass a list of numbers/strings etc
+// .mixin(1,2,3;) means one param which is list having three numbers 1,2,3
+// .mixin(1,2,3) means three params 1, 2 and 3. So use dummy semi-colon to make them one param
+// .mixin(1,2,3; 2;) two params one list and one value 2
+// if there is one semi-colon in the param list, compiler will assume that semi-colon
+// is the separator.
+// hence use semi-colon as practice for param spacing
+
+.bordered(@radius; @pattern) {
+    border-top: @pattern @radius black;
+    border-bottom: @pattern @radius black;
+}
+
+.component {
+    height: @height;
+    width: @width;
+    .bordered(5px, solid);
+    @media @min768 {
+        font-size: 20px;
+    }
+}
+
+@base: #f04615;
+@width-two: 0.5;
+
+.class {
+    width: percentage(@width-two);
+    color: saturate(@base, 5%);
+    background-color: spin(lighten(@base, 25%), 8);
+}
+
+/* color map */
+#colors() {
+    primary: blue;
+    secondary: green;
+}
+
+.condition {
+    margin: if((2>1), 20px, 30px);
+    border: 1px solid #colors[primary];
+}
+
+.loop(@counter) when (@counter > 0) {
+    .loop(@counter - 1); // next iteration
+    width: (10px * @counter); //  code for each iteration
+}
+
+div.footer {
+    .loop(5);
+}
+
+#my-mixin-one { // namespace 1
+    .li-border(@pattern: solid) {
+        border: 1px @pattern blue;
+        &:hover {
+            border: 1px @pattern green;
+        }
+    }
+}
+
+#my-mixin-two { //  namespace 2
+    .li-border(@color: black) {
+        border: 1px solid @color;
+        &:hover{
+            border: 1px solid rebeccapurple;
+        }
+    }
+}
+
+//  loop in less
+.generate-columns(@n, @i:1) when (@i <= @n) {
+    .column-@{i} {
+        width: (@i * 100%/@n);
+        // #my-mixin-one.li-border();
+        #my-mixin-one.li-border() !important; // will make all mixin properties ! important
+    }
+    .generate-columns(@n, (@i+1));
+}
+
+.generate-columns(4); // run the loop
+
+
+.nav ul {
+    &:extend(.inline);
+    background: blue;
+}
+
+.inline {
+    color: red;
+}
+
+li.list > a {
+    text-decoration: none;
+}
+
+.button > a {
+    &:extend(li.list > a);
+    color: red;
+}
+
+// merge
+// declare proptery that can be mergered using + or +_
+// + merges with comman , +_ merges with space
+.mixin() {
+    transform+_: scale(2);
+}
+
+.my-class {
+    .mixin();
+    transform+_: rotate(90deg)
+}
+
+
+// .mixin(@color, @margin: 2) // default value 2 supplied. So only ONE required param.
+// we can define multiple mixins with same name and number of parameters.
+.my-mix(@color) { // One mandatory para,
+    color: @color;
+}
+.my-mix(@color; @radius: 2) { // One mandatory param
+    color: @color;
+    border-radius: @radius;
+}
+.my-mix(@color; @radius) { // One mandatory param
+    color: @color;
+    border-radius: @radius;
+}
+
+.my-div {
+    .my-mix(#000); // since one param supplied, mixin with one mandatory param applies ie first and second from above.
+    border: 1px solid #f04615;
+}
+
+
+// @arguments variable in mixins contains all the values passed to the mixin when mixin is called.
+.box-shadow(@x:0; @y:0; @blur:1px; @color: #000) {
+    -webkit-box-shadow: @arguments;
+    -moz-box-shadow: @arguments;
+    box-shadow: @arguments;
+}
+
+.big-block {
+    .box-shadow(2px, 5px); // results in 2px 5px 1px #000
+}
+
+
+
+// @rest variable
+.my-rest(@color:#fff; @rest...){
+    color: @color;
+    margin: @rest;  
+}
+
+.my-box {
+    .my-rest(#fff; 2px; 4px);
+}
+
+
+// Alter behavior of mixin based on value passed.
+.my-switch(dark, @color) { // first argument fixed value: dark
+    color: darken(@color, 10%);
+}
+.my-switch(light, @color) { //  first argument fixed value: light
+    color: lighten(@color, 10%);
+}
+.my-switch(@a, @color) { // first argument anything in the variable @a
+    border: 1px solid @color;
+    display: block;
+}
+
+.my-switch-usage{
+    .my-switch(dark, #ebebeb);
+}
+
+// we can also create a variable for the first argument.
+@switch: light;
+
+.my-switch-usage-two{
+    .my-switch(@switch; #ebebeb);
+}
+
+
+// mixins as functions
+.average(@x; @y){
+    @result: ((@x+@y)/2);
+}
+
+.average-usage {
+    padding: .average(16px, 50px)[@result]; // use the mixin property/variable declared.
+    padding: .average(16px, 50px)[]; // simple [] works too. last specified value applied. Here we had only one value in average function.
+}
+
+
+// mixin namespaces
+// suppose we have a library.less
+#library() {
+    .mixin(){
+        prop: 2px;
+    }
+}
+
+// @import "library"; // we import the library
+#library(){ // override the mixin value
+    .mixin(){
+        prop: 10px;
+    }
+}
+
+.box {
+    border-radius: #library.mixin[prop]; //  use overriden value
+}
+
+
+//  Unnamed lookups
+// variable declared with values.
+// this is also called Varibale aliased to mixin
+@dr: {
+    radius: 2px;
+    color: red;
+}
+
+.box-dr {
+    border-radius: @dr[radius];
+    background-color: @dr[color]; // named lookup
+    color: @dr[]; // Unnamed lookup: all values will cascade and the last declared value in @dr applied.
+}
+
+
+
+// mixin defined in mixin acts as a return value too
+.unlock(@value) {
+    .doSomething() {
+        declaration: @value;
+    }
+}
+
+#namespace {
+    .unlock(10); // unlock the doSomething mixin
+    .doSomething();// use the doSomething mixin
+}
+
+
+// mixin guards
+.mixin-guard (@a) when (lightness(@a) >= 50%) {
+    background-color: black;
+}
+
+.mixin-guard(@a) when (lightness(@a) < 50%) {
+    background-color: white;
+}
+
+.mixin-guard(@a) {
+    color: @a;
+}
+
+.mixin-guard-usage-one {
+    .mixin-guard(#ddd);
+}
+
+.mixin-guard-usage-two {
+    .mixin-guard(#555)  ;
+}
+
+
+// below .truth mixin are same. the only TRUTHY value is true.
+.truth(@a) when (@a) {
+    color: @a;
+}
+
+.truth(@a) when (@a = true) {
+    color: @a;
+}
+
+.truth-usage {
+    .truth(true); // will not work if any other value is give. It has to be true. As we are not using any other 
+    // comparison operator like > < >= <= =
+}
+
+
+
+// combine guards using and keyword
+.mix-and(@a) when (ispixel(@a)) and (@a > 10) {
+    margin: @a;
+}
+
+
+.mix-and-usage {
+    .mix-and(17px);
+}
+
+
+.mix-comma(@a) when (isnumber(@a)), (@a > 10) {
+    margin: @a;
+}
+
+.mix-comma-usage {
+    .mix-comma(0); // works as isnumber is true. OR operator
+}
+
+.mix-not(@a) when not (isurl(@a)) and (iscolor(@a)) {
+    margin: @a;
+}
+
+.mix-not-usage {
+    .mix-not(#ebebeb);
+}
+
+// isnumber
+// isurl
+// iscolor
+// isstring
+// iskeyword
+
+
+// to check unit
+// ispixel
+// ispercentage
+// isem
+// isunit
+
+
+// Alias mixin call to variable
+#theme.options.nav {
+    .colors(light) {
+        primary: purple;
+    }
+    .colors(dark){
+        primary: black;
+        secondary: gray; 
+    }
+}
+
+.navbar {
+    @colors: #theme.options.nav.colors(dark);
+    background-color: @colors[primary];
+    border: 1px solid @colors[secondary];
+}
+
+// entire mixin call canbe aliased as varable
+#lib {
+    .rules() {
+        background-color: green;
+    }
+}
+
+.lib-usage {
+    @alias: #lib.rules(); // saving entire call to variable
+    @alias();  // applying the mixin using the variable call
+}
+
+
+// detached ruleset: groups of css properties rulset directly stored in a variable
+@my-option: {
+    background: yellowgreen;
+}
+
+.my-option-usage {
+    @my-option();
+}
+
+// CSS guards. Applying guards to CSS selectors directly.
+@my-var: 10px;
+button when (@my-var > 5) {
+    padding: @my-var;
+
+    & when (isnumber(@my-var)) {
+        margin: @my-var
+    }
+}
+
+// OR use a variable
+
+@my-val: 10px;
+@dec: if(@my-val > 5,  {
+    .list {
+        padding: @my-val;
+    }
+});
+
+@dec();
+
+.list-usage {
+    @dec(); // this will be output: .list-usage .list { ... }
+}
+
+
+// variable lookups
+@config: {
+    option-1: true;
+    @dark: {
+        primary: darkblue;
+    }
+    @light: {
+        primary: lightblue;
+    }
+}
+
+.config-lookup {
+    @lookup: dark;
+    color: @config[@@lookup][primary]
+}
+
+
+.my-var-mix() when (@config[@dark][primary] = darkblue) {
+    background: white;
+    border: 1px solid red;
+}
+
+.my-var-mix-usage {
+    .my-var-mix();
+}
+
+

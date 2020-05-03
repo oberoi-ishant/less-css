@@ -1,0 +1,159 @@
+/* command to generate css: lessc style.less style.css */
+.component {
+  height: 200px;
+  width: 100px;
+  border-top: solid 5px black;
+  border-bottom: solid 5px black;
+}
+@media (min-width: 768px) {
+  .component {
+    font-size: 20px;
+  }
+}
+.class {
+  width: 50%;
+  color: #f6430f;
+  background-color: #f8b38d;
+}
+/* color map */
+.condition {
+  margin: 20px;
+  border: 1px solid blue;
+}
+div.footer {
+  width: 10px;
+  width: 20px;
+  width: 30px;
+  width: 40px;
+  width: 50px;
+}
+.column-1 {
+  width: 25%;
+  border: 1px solid blue !important;
+}
+.column-1:hover {
+  border: 1px solid green !important;
+}
+.column-2 {
+  width: 50%;
+  border: 1px solid blue !important;
+}
+.column-2:hover {
+  border: 1px solid green !important;
+}
+.column-3 {
+  width: 75%;
+  border: 1px solid blue !important;
+}
+.column-3:hover {
+  border: 1px solid green !important;
+}
+.column-4 {
+  width: 100%;
+  border: 1px solid blue !important;
+}
+.column-4:hover {
+  border: 1px solid green !important;
+}
+.nav ul {
+  background: blue;
+}
+.inline,
+.nav ul {
+  color: red;
+}
+li.list > a,
+.button > a {
+  text-decoration: none;
+}
+.button > a {
+  color: red;
+}
+.my-class {
+  transform: scale(2) rotate(90deg);
+}
+.my-div {
+  color: #000;
+  border-radius: 2;
+  border: 1px solid #f04615;
+}
+.big-block {
+  -webkit-box-shadow: 2px 5px 1px #000;
+  -moz-box-shadow: 2px 5px 1px #000;
+  box-shadow: 2px 5px 1px #000;
+}
+.my-box {
+  color: #fff;
+  margin: 2px 4px;
+}
+.my-switch-usage {
+  color: #d2d2d2;
+  border: 1px solid #ebebeb;
+  display: block;
+}
+.my-switch-usage-two {
+  color: #ffffff;
+  border: 1px solid #ebebeb;
+  display: block;
+}
+.average-usage {
+  padding: 33px;
+}
+.box {
+  border-radius: 10px;
+}
+.box-dr {
+  border-radius: 2px;
+  background-color: red;
+  color: red;
+}
+#namespace {
+  declaration: 10;
+}
+.mixin-guard-usage-one {
+  background-color: black;
+  color: #ddd;
+}
+.mixin-guard-usage-two {
+  background-color: white;
+  color: #555;
+}
+.truth-usage {
+  color: true;
+}
+.mix-and-usage {
+  margin: 17px;
+}
+.mix-comma-usage {
+  margin: 0;
+}
+.mix-not-usage {
+  margin: #ebebeb;
+}
+.navbar {
+  background-color: black;
+  border: 1px solid gray;
+}
+.lib-usage {
+  background-color: green;
+}
+.my-option-usage {
+  background: yellowgreen;
+}
+button {
+  padding: 10px;
+  margin: 10px;
+}
+.list {
+  padding: 10px;
+}
+.list-usage .list {
+  padding: 10px;
+}
+.config-lookup {
+  color: darkblue;
+}
+.my-var-mix-usage {
+  background: white;
+  border: 1px solid red;
+}
